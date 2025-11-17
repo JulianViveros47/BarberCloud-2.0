@@ -25,7 +25,7 @@ BarberCloud está construido con un stack moderno y basado en buenas prácticas:
 - React Query (manejo de estado asíncrono)
 
 ### **Backend**
-*(Pendiente de implementación — Spring Boot con JWT y Google Login)*
+*(Pendiente de implementación — Node)*
 
 ---
 
