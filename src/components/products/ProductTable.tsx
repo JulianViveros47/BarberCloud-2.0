@@ -7,7 +7,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Edit } from "lucide-react";
+import { Edit, Trash2 } from "lucide-react";
 import {
   Pagination,
   PaginationContent,
@@ -16,20 +16,21 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { ProductResponse } from "@/types/api";
 import { useTranslation } from "react-i18next";
 
-export interface Product {
-  id: string;
-  name: string;
-  description: string;
-  images: string[];
-  colors: string[];
-  quantity: number;
-  category: string;
-  price: number;
-  disabled?: boolean; // ✅ Agregar esto
-}
+export type Product = ProductResponse;
 
 interface ProductTableProps {
   products: Product[];
@@ -37,8 +38,18 @@ interface ProductTableProps {
   totalPages: number;
   onPageChange: (page: number) => void;
   onEdit?: (product: Product) => void;
+  onDelete?: (product: Product) => void;
   showEditButton?: boolean;
+  showDeleteButton?: boolean;
+  isDeleting?: boolean;
 }
+
+const formatPrice = (priceInCents: number) =>
+  new Intl.NumberFormat("es-CO", {
+    style: "currency",
+    currency: "COP",
+    minimumFractionDigits: 2,
+  }).format(priceInCents / 100);
 
 export const ProductTable = ({
   products,
@@ -46,10 +57,20 @@ export const ProductTable = ({
   totalPages,
   onPageChange,
   onEdit,
+  onDelete,
   showEditButton = false,
+  showDeleteButton = false,
+  isDeleting = false,
 }: ProductTableProps) => {
-
   const { t } = useTranslation();
+
+  if (products.length === 0) {
+    return (
+      <div className="rounded-md border p-6 text-center text-muted-foreground">
+        Aun no hay productos registrados.
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -59,56 +80,72 @@ export const ProductTable = ({
             <TableRow>
               <TableHead>{t("product.id")}</TableHead>
               <TableHead>{t("product.nameTable")}</TableHead>
-              <TableHead>{t("product.categoryTable")}</TableHead>
+              <TableHead>{t("product.description")}</TableHead>
               <TableHead>{t("product.priceTable")}</TableHead>
               <TableHead>{t("product.quantityTable")}</TableHead>
-              <TableHead>{t("product.colorsTable")}</TableHead>
               <TableHead>{t("product.stateTable")}</TableHead>
-              {showEditButton && <TableHead className="text-right">{t("product.actions")}</TableHead>}
+              {(showEditButton || showDeleteButton) && (
+                <TableHead className="text-right">{t("product.actions")}</TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>
             {products.map((product) => (
               <TableRow key={product.id}>
-                <TableCell className="font-medium">{product.id}</TableCell>
-                <TableCell>{product.name}</TableCell>
-                <TableCell>{product.category}</TableCell>
-                <TableCell>${product.price.toFixed(2)}</TableCell>
-                <TableCell>{product.quantity}</TableCell>
-                <TableCell>
-                  <div className="flex gap-1">
-                    {product.colors.slice(0, 3).map((color, idx) => (
-                      <div
-                        key={idx}
-                        className="w-6 h-6 rounded-full border-2 border-border"
-                        style={{ backgroundColor: color }}
-                        title={color}
-                      />
-                    ))}
-                    {product.colors.length > 3 && (
-                      <span className="text-xs text-muted-foreground ml-1">
-                        +{product.colors.length - 3}
-                      </span>
-                    )}
-                  </div>
+                <TableCell className="max-w-36 truncate font-medium" title={product.id}>
+                  {product.id}
                 </TableCell>
+                <TableCell>{product.name}</TableCell>
+                <TableCell className="max-w-64 truncate">
+                  {product.description || "Sin descripcion"}
+                </TableCell>
+                <TableCell>{formatPrice(product.priceInCents)}</TableCell>
+                <TableCell>{product.stock}</TableCell>
                 <TableCell>
-                  {product.disabled ? (
-                    <span className="text-red-600 font-medium">{t("product.inactive")}</span>
-                  ) : (
+                  {product.active ? (
                     <span className="text-green-600 font-medium">{t("product.active")}</span>
+                  ) : (
+                    <span className="text-red-600 font-medium">{t("product.inactive")}</span>
                   )}
                 </TableCell>
-                {showEditButton && (
+                {(showEditButton || showDeleteButton) && (
                   <TableCell className="text-right">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => onEdit?.(product)}
-                    >
-                      <Edit className="w-4 h-4 mr-1" />
-                      {t("product.edit")}
-                    </Button>
+                    <div className="flex justify-end gap-2">
+                      {showEditButton && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => onEdit?.(product)}
+                        >
+                          <Edit className="w-4 h-4 mr-1" />
+                          {t("product.edit")}
+                        </Button>
+                      )}
+                      {showDeleteButton && (
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="destructive" size="sm" disabled={isDeleting}>
+                              <Trash2 className="w-4 h-4 mr-1" />
+                              Eliminar
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Eliminar producto</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Esta accion desactivara el producto y dejara de mostrarse en la lista.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => onDelete?.(product)}>
+                                Confirmar
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      )}
+                    </div>
                   </TableCell>
                 )}
               </TableRow>

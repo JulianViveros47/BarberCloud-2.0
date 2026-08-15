@@ -7,18 +7,27 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
+import { useCreateBarberShop } from "@/hooks/useBarberShops";
+import { useRegister } from "@/hooks/useAuth";
+import { getAuthToken } from "@/services/api";
+
+const SELECTED_BARBERSHOP_KEY = "barbercloud_selected_barbershop_id";
 
 const Register = () => {
   const { toast } = useToast();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const createBarberShopMutation = useCreateBarberShop();
+  const registerMutation = useRegister();
 
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     id: "",
     phone: "",
+    password: "",
     shopName: "",
+    shopEmail: "",
     descripcion: "",
     department: "",
     city: "",
@@ -27,12 +36,64 @@ const Register = () => {
     secondaryColor: "#1A1A1A",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: t("register.title"),
-      description: "Funcionalidad en desarrollo. Próximamente disponible.",
-    });
+
+    const name = formData.shopName.trim();
+    const description = formData.descripcion.trim();
+    const phone = formData.phone.trim();
+    const email = formData.shopEmail.trim();
+    const hasToken = Boolean(getAuthToken());
+
+    if (!name || !phone || !email) {
+      toast({
+        title: "Datos incompletos",
+        description: "Nombre de barberia, telefono y correo son obligatorios.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!hasToken && (!formData.firstName.trim() || !formData.lastName.trim() || !formData.password)) {
+      toast({
+        title: "Datos incompletos",
+        description: "Nombre, apellido y contrasena son obligatorios para crear tu cuenta.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      if (!hasToken) {
+        await registerMutation.mutateAsync({
+          firstName: formData.firstName.trim(),
+          lastName: formData.lastName.trim(),
+          email,
+          password: formData.password,
+          role: "BARBERSHOP_ADMIN",
+        });
+      }
+
+      const barberShop = await createBarberShopMutation.mutateAsync({
+        name,
+        description,
+        phone,
+        email,
+      });
+
+      localStorage.setItem(SELECTED_BARBERSHOP_KEY, barberShop.id);
+      toast({
+        title: t("register.title"),
+        description: "Barberia registrada correctamente.",
+      });
+      navigate("/home-product");
+    } catch (error) {
+      toast({
+        title: "No se pudo registrar la barberia",
+        description: error instanceof Error ? error.message : "Verifica los datos enviados.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -108,6 +169,20 @@ const Register = () => {
                   />
                 </div>
                 <div className="space-y-2">
+                  <Label htmlFor="password">{t("login.password")}</Label>
+                  <Input
+                    id="password"
+                    name="password"
+                    type="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required={!getAuthToken()}
+                  />
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-2">
                   <Label htmlFor="phone">{t("register.phone")}</Label>
                   <Input
                     id="phone"
@@ -127,6 +202,18 @@ const Register = () => {
                   id="shopName"
                   name="shopName"
                   value={formData.shopName}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="shopEmail">{t("contact.email")}</Label>
+                <Input
+                  id="shopEmail"
+                  name="shopEmail"
+                  type="email"
+                  value={formData.shopEmail}
                   onChange={handleChange}
                   required
                 />
@@ -232,8 +319,12 @@ const Register = () => {
                 </div>
               </div>
 
-              <Button type="submit" className="w-full bg-gradient-primary hover:opacity-90 text-lg shadow-soft">
-                {t("register.submit")}
+              <Button
+                type="submit"
+                className="w-full bg-gradient-primary hover:opacity-90 text-lg shadow-soft"
+                disabled={createBarberShopMutation.isPending || registerMutation.isPending}
+              >
+                {createBarberShopMutation.isPending || registerMutation.isPending ? "Registrando..." : t("register.submit")}
               </Button>
             </form>
 

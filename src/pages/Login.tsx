@@ -3,10 +3,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Scissors } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
+import { useLogin } from "@/hooks/useAuth";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -14,14 +15,27 @@ const Login = () => {
   const { toast } = useToast();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
+  const loginMutation = useLogin();
+  const redirectTo = (location.state as { from?: string } | null)?.from || "/home-admin-barber";
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: t('login.title'),
-      description: "Funcionalidad en desarrollo. Próximamente disponible.",
-    });
-    navigate(/*Cliente"*/  "/home-customer"  /*AdminBarberia  "/home-admin-barber"*/ );
+
+    try {
+      await loginMutation.mutateAsync({ email, password });
+      toast({
+        title: t("login.title"),
+        description: "Inicio de sesion correcto.",
+      });
+      navigate(redirectTo, { replace: true });
+    } catch (error) {
+      toast({
+        title: "No se pudo iniciar sesion",
+        description: error instanceof Error ? error.message : "Credenciales invalidas o servidor no disponible.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleGoogleLogin = () => {
@@ -99,8 +113,12 @@ const Login = () => {
                 />
               </div>
 
-              <Button type="submit" className="w-full bg-gradient-primary hover:opacity-90 text-lg shadow-soft">
-                {t('login.submit')}
+              <Button
+                type="submit"
+                className="w-full bg-gradient-primary hover:opacity-90 text-lg shadow-soft"
+                disabled={loginMutation.isPending}
+              >
+                {loginMutation.isPending ? "Ingresando..." : t('login.submit')}
               </Button>
             </form>
 

@@ -2,8 +2,10 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
+import type { ReactNode } from "react";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { isAuthenticated } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -22,6 +24,16 @@ import RegisterModify from "./pages/RegisterModify";
 
 const queryClient = new QueryClient();
 
+const PrivateRoute = ({ children }: { children: ReactNode }) => {
+  const location = useLocation();
+
+  return isAuthenticated() ? (
+    <>{children}</>
+  ) : (
+    <Navigate to="/login" replace state={{ from: location.pathname }} />
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
@@ -38,14 +50,14 @@ const App = () => (
             <Route path="/features-customer" element={<HomeFeaturesCustomer />} />
             <Route path="/ratings" element={<Ratings />} />
 
-            <Route path="/home-admin-barber" element={<HomeAdminBarber />} />
-            <Route path="/home-product" element={<HomeProduct />} />
-            <Route path="/home-product-modify" element={<HomeProductModify />} />
-            <Route path="/home-product-edit/:productId" element={<HomeProductEdit />} />
-            <Route path="/ratings-admin-barber" element={<RatingsAdminBarber />} />
-            <Route path="/shop-admin-barber" element={<HomeAdminBarberShop />} />
+            <Route path="/home-admin-barber" element={<PrivateRoute><HomeAdminBarber /></PrivateRoute>} />
+            <Route path="/home-product" element={<PrivateRoute><HomeProduct /></PrivateRoute>} />
+            <Route path="/home-product-modify" element={<PrivateRoute><HomeProductModify /></PrivateRoute>} />
+            <Route path="/home-product-edit/:productId" element={<PrivateRoute><HomeProductEdit /></PrivateRoute>} />
+            <Route path="/ratings-admin-barber" element={<PrivateRoute><RatingsAdminBarber /></PrivateRoute>} />
+            <Route path="/shop-admin-barber" element={<PrivateRoute><HomeAdminBarberShop /></PrivateRoute>} />
 
-            <Route path="/register-modify" element={<RegisterModify />} />
+            <Route path="/register-modify" element={<PrivateRoute><RegisterModify /></PrivateRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
