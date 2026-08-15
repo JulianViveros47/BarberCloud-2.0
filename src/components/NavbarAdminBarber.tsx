@@ -7,9 +7,9 @@ import { LanguageToggle } from "@/components/LanguageToggle";
 import { useTranslation } from "react-i18next";
 import i18n from "@/lib/i18n"; // ✅ Instancia local
 import { Link } from "react-router-dom";
+import { UserProfileDialog } from "@/components/UserProfileDialog";
 
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog";
 
 
 const NavbarAdminBarber = () => {
@@ -97,35 +97,7 @@ const NavbarAdminBarber = () => {
         </div>
       )}
 
-      {/* Modal perfil */}
-
-<Dialog open={modalOpen} onOpenChange={setModalOpen}>
-  <DialogContent className="max-w-sm text-center">
-    <DialogHeader>
-      <DialogTitle>{t("navCustomer.profileTitle")}</DialogTitle>
-      <DialogDescription>
-        Información del usuario y opciones disponibles, incluyendo cerrar sesión.
-      </DialogDescription>
-    </DialogHeader>
-
-    <div className="flex flex-col items-center gap-3">
-      <img
-        src="https://via.placeholder.com/100"
-        alt="profile"
-        className="w-20 h-20 rounded-full border"
-      />
-      <p className="font-semibold text-lg">Julian</p>
-      <p className="text-sm text-muted-foreground">julian@example.com</p>
-      <Button variant="destructive" className="mt-3">
-        {t("navCustomer.logout")}
-      </Button>
-    </div>
-
-    <DialogClose className="absolute right-4 top-4">
-      <span className="sr-only">Cerrar</span>
-    </DialogClose>
-  </DialogContent>
-</Dialog>
+      <UserProfileDialog open={modalOpen} onOpenChange={setModalOpen} />
 
 
     </nav>

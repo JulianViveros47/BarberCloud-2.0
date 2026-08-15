@@ -42,6 +42,7 @@ export interface BarberShopResponse {
   id: string;
   name: string;
   slug: string;
+  ownerUserId: string | null;
   description: string;
   phone: string;
   email: string;

@@ -1,23 +1,17 @@
 import { useState } from "react";
-import { Scissors, Filter, User, Menu, X, ShoppingCart, ArrowLeft } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { Scissors, User, Menu, X, ShoppingCart, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageToggle } from "@/components/LanguageToggle";
-import { useTranslation } from "react-i18next";
-import i18n from "@/lib/i18n";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import Cart from "@/components/shop/Cart";
 import { useCart } from "@/contexts/CartContext"; // ✅ Contexto global del carrito
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { UserProfileDialog } from "@/components/UserProfileDialog";
 
 
 const NavbarAdminBarberShop = () => {
-  const { t } = useTranslation(undefined, { i18n });
-  const [filterOpen, setFilterOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -119,22 +113,7 @@ const NavbarAdminBarberShop = () => {
         </div>
       )}
 
-      {/* Modal perfil */}
-      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-        <DialogContent className="max-w-sm text-center">
-          <DialogHeader>
-            <DialogTitle>{t("navCustomer.profileTitle")}</DialogTitle>
-          </DialogHeader>
-          <div className="flex flex-col items-center gap-3">
-            <img src="https://via.placeholder.com/100" alt="profile" className="w-20 h-20 rounded-full border" />
-            <p className="font-semibold text-lg">Julian</p>
-            <p className="text-sm text-muted-foreground">julian@example.com</p>
-            <Button variant="destructive" className="mt-3">
-              {t("navCustomer.logout")}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <UserProfileDialog open={modalOpen} onOpenChange={setModalOpen} />
 
       {/* ✅ Carrito compartido */}
       <Cart open={isCartOpen} onClose={() => setIsCartOpen(false)} />
