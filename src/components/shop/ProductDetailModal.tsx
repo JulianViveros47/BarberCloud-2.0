@@ -33,8 +33,14 @@ const ProductDetailModal = ({ product, open, onClose }: ProductDetailModalProps)
   const { addToCart } = useCart();
   const { t } = useTranslation();
   const isLowStock = typeof product.stock === "number" && product.stock > 0 && product.stock <= 5;
+  const isOutOfStock = typeof product.stock === "number" && product.stock <= 0;
 
   const handleAddToCart = () => {
+    if (isOutOfStock) {
+      toast.error("Este producto no tiene stock disponible");
+      return;
+    }
+
     addToCart(product, selectedColor);
     toast.success(`${product.name} (${selectedColor}) ${t("shop.addedToCart")}`);
     onClose();
@@ -88,6 +94,11 @@ const ProductDetailModal = ({ product, open, onClose }: ProductDetailModalProps)
                 Stock bajo
               </Badge>
             )}
+            {isOutOfStock && (
+              <Badge variant="destructive" className="w-fit">
+                Agotado
+              </Badge>
+            )}
 
             <div>
               <p className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
@@ -131,6 +142,7 @@ const ProductDetailModal = ({ product, open, onClose }: ProductDetailModalProps)
                 onClick={handleAddToCart}
                 className="flex-1 bg-gradient-primary hover:opacity-90 shadow-soft"
                 size="lg"
+                disabled={isOutOfStock}
               >
                 <ShoppingCart className="w-5 h-5 mr-2" />
                 {t("shop.addToCart")}

@@ -36,6 +36,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   const addToCart = (product: Product, color?: string) => {
+    if (typeof product.stock === "number" && product.stock <= 0) {
+      return;
+    }
+
     setItems(currentItems => {
       const existingItem = currentItems.find(
         item => item.id === product.id && item.selectedColor === color
@@ -44,7 +48,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       if (existingItem) {
         return currentItems.map(item =>
           item.id === product.id && item.selectedColor === color
-            ? { ...item, quantity: item.quantity + 1 }
+            ? { ...item, quantity: Math.min(item.quantity + 1, item.stock ?? item.quantity + 1) }
             : item
         );
       }
@@ -64,9 +68,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }
 
     setItems(currentItems =>
-      currentItems.map(item =>
-        item.id === productId ? { ...item, quantity } : item
-      )
+      currentItems.map(item => {
+        if (item.id !== productId) {
+          return item;
+        }
+
+        return { ...item, quantity: Math.min(quantity, item.stock ?? quantity) };
+      })
     );
   };
 

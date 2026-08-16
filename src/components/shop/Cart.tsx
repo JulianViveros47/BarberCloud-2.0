@@ -56,6 +56,14 @@ const Cart = ({ open, onClose }: CartProps) => {
       return false;
     }
 
+    const itemWithoutStock = items.find(
+      (item) => typeof item.stock === "number" && item.quantity > item.stock,
+    );
+    if (itemWithoutStock) {
+      toast.error(`No hay stock suficiente para ${itemWithoutStock.name}`);
+      return false;
+    }
+
     return true;
   };
 
@@ -153,6 +161,7 @@ const Cart = ({ open, onClose }: CartProps) => {
                           size="icon"
                           className="h-8 w-8"
                           onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          disabled={typeof item.stock === "number" && item.quantity >= item.stock}
                         >
                           <Plus className="w-3 h-3" />
                         </Button>

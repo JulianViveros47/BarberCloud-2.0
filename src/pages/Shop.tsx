@@ -51,7 +51,7 @@ const Shop = () => {
   const products = useMemo<Product[]>(
     () =>
       (productsQuery.data || [])
-        .filter((product) => product.active && product.stock > 0)
+        .filter((product) => product.active)
         .filter((product) => product.name.toLowerCase().includes(searchQuery.toLowerCase()))
         .map((product, index) => ({
           id: product.id,

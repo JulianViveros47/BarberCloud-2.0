@@ -17,9 +17,15 @@ const ProductCard = ({ product, onViewDetails }: ProductCardProps) => {
   const { addToCart } = useCart();
   const { t } = useTranslation();
   const isLowStock = typeof product.stock === "number" && product.stock > 0 && product.stock <= 5;
+  const isOutOfStock = typeof product.stock === "number" && product.stock <= 0;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (isOutOfStock) {
+      toast.error("Este producto no tiene stock disponible");
+      return;
+    }
+
     addToCart(product);
     toast.success(`${product.name} ${t("shop.addedToCart")}`);
   };
@@ -40,6 +46,11 @@ const ProductCard = ({ product, onViewDetails }: ProductCardProps) => {
         {isLowStock && (
           <Badge className="absolute left-4 top-4 bg-amber-500 text-white hover:bg-amber-500">
             Stock bajo
+          </Badge>
+        )}
+        {isOutOfStock && (
+          <Badge variant="destructive" className="absolute left-4 top-4">
+            Agotado
           </Badge>
         )}
         
@@ -95,6 +106,7 @@ const ProductCard = ({ product, onViewDetails }: ProductCardProps) => {
         <Button
           onClick={handleAddToCart}
           className="bg-gradient-primary hover:opacity-90 shadow-soft"
+          disabled={isOutOfStock}
         >
           <ShoppingCart className="w-4 h-4 mr-2" />
           {t("shop.add")}
