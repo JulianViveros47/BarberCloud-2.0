@@ -2,6 +2,7 @@ import { Fragment, useEffect, useMemo, useState } from "react";
 import NavbarProduct from "@/components/products/NavbarProduct";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { ChevronDown, ChevronRight, ClipboardList, TrendingUp } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useBarberShops } from "@/hooks/useBarberShops";
@@ -29,6 +30,7 @@ const HistoricalSales = () => {
     () => localStorage.getItem(SELECTED_BARBERSHOP_KEY) || "",
   );
   const [expandedSaleId, setExpandedSaleId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const barberShopsQuery = useBarberShops();
   const salesQuery = useSalesByBarberShop(selectedBarberShopId || undefined);
 
@@ -44,7 +46,27 @@ const HistoricalSales = () => {
     }
   }, [activeBarberShops, selectedBarberShopId]);
 
-  const sales = salesQuery.data || [];
+  const sales = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    const allSales = salesQuery.data || [];
+
+    if (!query) {
+      return allSales;
+    }
+
+    return allSales.filter((sale) => {
+      const searchableText = [
+        sale.customerName,
+        sale.customerContact || "",
+        sale.customerEmail,
+        ...sale.items.map((item) => item.productName),
+      ]
+        .join(" ")
+        .toLowerCase();
+
+      return searchableText.includes(query);
+    });
+  }, [salesQuery.data, searchQuery]);
   const isLoading = barberShopsQuery.isLoading || salesQuery.isLoading;
   const errorMessage =
     barberShopsQuery.error instanceof Error
@@ -68,7 +90,17 @@ const HistoricalSales = () => {
             {isLoading && <p className="text-muted-foreground">Cargando ventas...</p>}
             {errorMessage && <p className="text-destructive">{errorMessage}</p>}
 
-            {!isLoading && !errorMessage && sales.length === 0 && (
+            {!isLoading && !errorMessage && (salesQuery.data || []).length > 0 && (
+              <div className="mb-4 max-w-md">
+                <Input
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                  placeholder="Buscar por cliente, contacto o producto"
+                />
+              </div>
+            )}
+
+            {!isLoading && !errorMessage && sales.length === 0 && !searchQuery.trim() && (
               <div className="rounded-md border p-8 text-center">
                 <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
                   <ClipboardList className="h-8 w-8 text-muted-foreground" />
@@ -80,6 +112,12 @@ const HistoricalSales = () => {
                 <Button asChild className="mt-6">
                   <Link to="/shop-admin-barber">Ir a la tienda</Link>
                 </Button>
+              </div>
+            )}
+
+            {!isLoading && !errorMessage && sales.length === 0 && searchQuery.trim() && (
+              <div className="rounded-md border p-8 text-center text-muted-foreground">
+                No se encontraron ventas con ese filtro.
               </div>
             )}
 
