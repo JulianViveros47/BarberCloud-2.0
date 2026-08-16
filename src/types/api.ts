@@ -65,6 +65,8 @@ export interface SaleItemRequest {
 
 export interface SaleRequest {
   barberShopId: string;
+  customerName: string;
+  customerContact?: string;
   items: SaleItemRequest[];
 }
 
@@ -80,6 +82,8 @@ export interface SaleItemResponse {
 export interface SaleResponse {
   id: string;
   barberShopId: string;
+  customerName: string;
+  customerContact: string | null;
   customerEmail: string;
   totalInCents: number;
   createdAt: string;

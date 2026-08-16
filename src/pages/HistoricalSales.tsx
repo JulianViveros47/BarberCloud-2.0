@@ -89,6 +89,7 @@ const HistoricalSales = () => {
                     <TableRow>
                       <TableHead>Fecha</TableHead>
                       <TableHead>Cliente</TableHead>
+                      <TableHead>Registrada por</TableHead>
                       <TableHead>Productos</TableHead>
                       <TableHead className="text-right">Total</TableHead>
                     </TableRow>
@@ -97,6 +98,12 @@ const HistoricalSales = () => {
                     {sales.map((sale) => (
                       <TableRow key={sale.id}>
                         <TableCell>{new Date(sale.createdAt).toLocaleString("es-CO")}</TableCell>
+                        <TableCell>
+                          <div className="font-medium">{sale.customerName}</div>
+                          {sale.customerContact && (
+                            <div className="text-xs text-muted-foreground">{sale.customerContact}</div>
+                          )}
+                        </TableCell>
                         <TableCell>{sale.customerEmail}</TableCell>
                         <TableCell>
                           {sale.items.map((item) => `${item.productName} x${item.quantity}`).join(", ")}

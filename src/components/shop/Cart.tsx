@@ -1,4 +1,5 @@
 import { Plus, Minus, Trash2, ShoppingBag } from "lucide-react";
+import { useState } from "react";
 import {
   Sheet,
   SheetContent,
@@ -7,6 +8,8 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
@@ -22,6 +25,8 @@ const Cart = ({ open, onClose }: CartProps) => {
   const { items, removeFromCart, updateQuantity, totalPrice, clearCart } = useCart();
   const createSaleMutation = useCreateSale();
   const { t } = useTranslation();
+  const [customerName, setCustomerName] = useState("");
+  const [customerContact, setCustomerContact] = useState("");
 
   const handleCheckout = async () => {
     if (items.length === 0) {
@@ -35,15 +40,24 @@ const Cart = ({ open, onClose }: CartProps) => {
       return;
     }
 
+    if (!customerName.trim()) {
+      toast.error("Ingresa el nombre del cliente");
+      return;
+    }
+
     try {
       await createSaleMutation.mutateAsync({
         barberShopId,
+        customerName: customerName.trim(),
+        customerContact: customerContact.trim() || undefined,
         items: items.map((item) => ({
           productId: item.id,
           quantity: item.quantity,
         })),
       });
       clearCart();
+      setCustomerName("");
+      setCustomerContact("");
       onClose();
       toast.success("Venta registrada correctamente");
     } catch (error) {
@@ -131,6 +145,29 @@ const Cart = ({ open, onClose }: CartProps) => {
             </div>
 
             <div className="border-t border-border pt-4 space-y-4">
+              <Card>
+                <CardContent className="p-4 space-y-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="saleCustomerName">Cliente *</Label>
+                    <Input
+                      id="saleCustomerName"
+                      value={customerName}
+                      onChange={(event) => setCustomerName(event.target.value)}
+                      placeholder="Nombre del cliente"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="saleCustomerContact">Contacto</Label>
+                    <Input
+                      id="saleCustomerContact"
+                      value={customerContact}
+                      onChange={(event) => setCustomerContact(event.target.value)}
+                      placeholder="Telefono o email"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
               <Card className="bg-secondary/50">
                 <CardContent className="p-4 space-y-3">
                   <div className="flex justify-between text-sm">
