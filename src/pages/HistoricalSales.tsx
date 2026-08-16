@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import NavbarProduct from "@/components/products/NavbarProduct";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ClipboardList, TrendingUp } from "lucide-react";
+import { ChevronDown, ChevronRight, ClipboardList, TrendingUp } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useBarberShops } from "@/hooks/useBarberShops";
 import { useSalesByBarberShop } from "@/hooks/useSales";
@@ -28,6 +28,7 @@ const HistoricalSales = () => {
   const [selectedBarberShopId, setSelectedBarberShopId] = useState(
     () => localStorage.getItem(SELECTED_BARBERSHOP_KEY) || "",
   );
+  const [expandedSaleId, setExpandedSaleId] = useState<string | null>(null);
   const barberShopsQuery = useBarberShops();
   const salesQuery = useSalesByBarberShop(selectedBarberShopId || undefined);
 
@@ -87,6 +88,7 @@ const HistoricalSales = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
+                      <TableHead className="w-12"></TableHead>
                       <TableHead>Fecha</TableHead>
                       <TableHead>Cliente</TableHead>
                       <TableHead>Registrada por</TableHead>
@@ -95,24 +97,80 @@ const HistoricalSales = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {sales.map((sale) => (
-                      <TableRow key={sale.id}>
-                        <TableCell>{new Date(sale.createdAt).toLocaleString("es-CO")}</TableCell>
-                        <TableCell>
-                          <div className="font-medium">{sale.customerName}</div>
-                          {sale.customerContact && (
-                            <div className="text-xs text-muted-foreground">{sale.customerContact}</div>
+                    {sales.map((sale) => {
+                      const isExpanded = expandedSaleId === sale.id;
+
+                      return (
+                        <Fragment key={sale.id}>
+                          <TableRow>
+                            <TableCell>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8"
+                                onClick={() => setExpandedSaleId(isExpanded ? null : sale.id)}
+                                aria-label={isExpanded ? "Ocultar detalle" : "Ver detalle"}
+                              >
+                                {isExpanded ? (
+                                  <ChevronDown className="h-4 w-4" />
+                                ) : (
+                                  <ChevronRight className="h-4 w-4" />
+                                )}
+                              </Button>
+                            </TableCell>
+                            <TableCell>{new Date(sale.createdAt).toLocaleString("es-CO")}</TableCell>
+                            <TableCell>
+                              <div className="font-medium">{sale.customerName}</div>
+                              {sale.customerContact && (
+                                <div className="text-xs text-muted-foreground">{sale.customerContact}</div>
+                              )}
+                            </TableCell>
+                            <TableCell>{sale.customerEmail}</TableCell>
+                            <TableCell>
+                              {sale.items.map((item) => `${item.productName} x${item.quantity}`).join(", ")}
+                            </TableCell>
+                            <TableCell className="text-right font-semibold">
+                              {formatPrice(sale.totalInCents)}
+                            </TableCell>
+                          </TableRow>
+                          {isExpanded && (
+                            <TableRow>
+                              <TableCell colSpan={6} className="bg-muted/30">
+                                <div className="space-y-3 py-2">
+                                  <p className="text-sm font-medium">Detalle de la venta</p>
+                                  <div className="rounded-md border bg-background">
+                                    <Table>
+                                      <TableHeader>
+                                        <TableRow>
+                                          <TableHead>Producto</TableHead>
+                                          <TableHead className="text-right">Cantidad</TableHead>
+                                          <TableHead className="text-right">Precio unitario</TableHead>
+                                          <TableHead className="text-right">Subtotal</TableHead>
+                                        </TableRow>
+                                      </TableHeader>
+                                      <TableBody>
+                                        {sale.items.map((item) => (
+                                          <TableRow key={item.id}>
+                                            <TableCell>{item.productName}</TableCell>
+                                            <TableCell className="text-right">{item.quantity}</TableCell>
+                                            <TableCell className="text-right">
+                                              {formatPrice(item.unitPriceInCents)}
+                                            </TableCell>
+                                            <TableCell className="text-right font-medium">
+                                              {formatPrice(item.subtotalInCents)}
+                                            </TableCell>
+                                          </TableRow>
+                                        ))}
+                                      </TableBody>
+                                    </Table>
+                                  </div>
+                                </div>
+                              </TableCell>
+                            </TableRow>
                           )}
-                        </TableCell>
-                        <TableCell>{sale.customerEmail}</TableCell>
-                        <TableCell>
-                          {sale.items.map((item) => `${item.productName} x${item.quantity}`).join(", ")}
-                        </TableCell>
-                        <TableCell className="text-right font-semibold">
-                          {formatPrice(sale.totalInCents)}
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                        </Fragment>
+                      );
+                    })}
                   </TableBody>
                 </Table>
               </div>
