@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Scissors, User, Menu, X, ShoppingCart, ArrowLeft } from "lucide-react";
+import { User, Menu, X, ShoppingCart, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -7,8 +7,8 @@ import { LanguageToggle } from "@/components/LanguageToggle";
 import Cart from "@/components/shop/Cart";
 import { useCart } from "@/contexts/CartContext"; // ✅ Contexto global del carrito
 import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
 import { UserProfileDialog } from "@/components/UserProfileDialog";
+import { BrandLogo } from "@/components/BrandLogo";
 
 
 const NavbarAdminBarberShop = () => {
@@ -28,11 +28,7 @@ const NavbarAdminBarberShop = () => {
             <ArrowLeft className="h-5 w-5 text-secondary dark:text-white" />
           </button>
           
-                   <Link to="/" className="flex items-center gap-2 text-2xl font-bold">
-                                         <Scissors className="h-6 w-6 text-primary" />
-                                         <span className="text-secondary dark:text-white">Barber</span>
-                                         <span className="text-primary">Cloud</span>
-                                       </Link>
+          <BrandLogo />
                    
         </div>
 

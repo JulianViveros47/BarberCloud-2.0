@@ -1,0 +1,18 @@
+<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">BarberCloud logo</title>
+  <desc id="desc">A cloud-shaped barber mark with scissors and a subtle shine.</desc>
+  <rect width="96" height="96" rx="24" fill="#0F172A"/>
+  <path d="M25 56.5C19.477 56.5 15 52.023 15 46.5C15 40.977 19.477 36.5 25 36.5C25.815 36.5 26.607 36.598 27.366 36.783C30.014 28.768 37.567 23 46.5 23C56.016 23 64.006 29.596 66.117 38.468C66.739 38.362 67.378 38.307 68.03 38.307C74.514 38.307 79.77 43.563 79.77 50.047C79.77 56.531 74.514 61.787 68.03 61.787H26.25C25.834 61.787 25.417 61.763 25 61.715V56.5Z" fill="url(#cloudGradient)"/>
+  <path d="M33.5 69.5L62.5 36.5" stroke="#F8FAFC" stroke-width="5" stroke-linecap="round"/>
+  <path d="M62.5 69.5L33.5 36.5" stroke="#F8FAFC" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="28" cy="75" r="8" fill="#0F172A" stroke="#F59E0B" stroke-width="5"/>
+  <circle cx="68" cy="75" r="8" fill="#0F172A" stroke="#F59E0B" stroke-width="5"/>
+  <path d="M55 30.5C58.872 32.207 61.856 35.546 63.095 39.635" stroke="#FDE68A" stroke-width="4" stroke-linecap="round"/>
+  <defs>
+    <linearGradient id="cloudGradient" x1="17" y1="24" x2="75" y2="63" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FDE68A"/>
+      <stop offset="0.45" stop-color="#F59E0B"/>
+      <stop offset="1" stop-color="#D97706"/>
+    </linearGradient>
+  </defs>
+</svg>

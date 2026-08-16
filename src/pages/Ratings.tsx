@@ -3,8 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Scissors } from "lucide-react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { BrandLogo } from "@/components/BrandLogo";
 
 const Ratings = () => {
   const { t } = useTranslation();
@@ -24,11 +25,7 @@ const Ratings = () => {
       
       {/* Logo arriba */}
       <div className="text-center">
-        <Link to="/" className="inline-flex items-center gap-2 text-3xl font-bold">
-          <Scissors className="h-8 w-8 text-primary" />
-          <span className="text-secondary dark:text-white">Barber</span>
-          <span className="text-primary">Cloud</span>
-        </Link>
+        <BrandLogo size="lg" />
       </div>
 
       {/* Tarjeta */}

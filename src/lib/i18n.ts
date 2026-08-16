@@ -15,7 +15,7 @@ const resources = {
         register: "Registrar Barbería"
       },
       hero: {
-        title: "En BarbeCloud puedes llevar tu barberia a otro nivel.",
+        title: "En BarberCloud puedes llevar tu barberia a otro nivel.",
         subtitle: "La plataforma completa que conecta barberías profesionales con clientes que buscan el mejor servicio. Gestiona tu negocio o encuentra tu estilo ideal.",
         explore: "Explora barberías",
         start: "Empieza ahora"
@@ -121,7 +121,7 @@ const resources = {
         legal: "Legal",
         privacy: "Privacidad",
         terms: "Términos",
-        rights: "© 2025 BarbeCloud. Todos los derechos reservados.",
+        rights: "© 2025 BarberCloud. Todos los derechos reservados.",
         description :"La plataforma completa para barberías modernas y sus clientes."
       },
       navCustomer: {
@@ -362,7 +362,7 @@ const resources = {
         legal: "Legal",
         privacy: "Privacy",
         terms: "Terms",
-        rights: "© 2025 BarbeCloud. All rights reserved.",
+        rights: "© 2025 BarberCloud. All rights reserved.",
         description: "The complete platform for modern barbershops and their clients."
       },
       navCustomer: {

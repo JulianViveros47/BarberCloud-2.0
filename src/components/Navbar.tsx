@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Scissors, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { useTranslation } from "react-i18next";
+import { BrandLogo } from "@/components/BrandLogo";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -14,11 +15,7 @@ const Navbar = () => {
     <nav className="sticky top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-lg border-b border-border shadow-soft">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 text-2xl font-bold">
-            <Scissors className="h-6 w-6 text-primary" />
-            <span className="text-secondary dark:text-white">Barber</span>
-            <span className="text-primary">Cloud</span>
-          </Link>
+          <BrandLogo />
           
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-8">

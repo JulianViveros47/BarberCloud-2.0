@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 import { useCreateBarberShop } from "@/hooks/useBarberShops";
 import { useRegister } from "@/hooks/useAuth";
 import { getAuthToken } from "@/services/api";
+import { BrandLogo } from "@/components/BrandLogo";
 
 const SELECTED_BARBERSHOP_KEY = "barbercloud_selected_barbershop_id";
 
@@ -107,11 +108,7 @@ const Register = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-hero p-4 py-12">
       <div className="w-full max-w-3xl">
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 text-3xl font-bold">
-            <Scissors className="h-8 w-8 text-primary" />
-            <span className="text-secondary dark:text-white">Barber</span>
-            <span className="text-primary">Cloud</span>
-          </Link>
+          <BrandLogo size="lg" />
         </div>
 
         {/* ✂️ Tarjeta con botón para volver */}

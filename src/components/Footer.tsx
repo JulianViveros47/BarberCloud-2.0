@@ -1,6 +1,5 @@
-import { Scissors } from "lucide-react";
-import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { BrandLogo } from "@/components/BrandLogo";
 
 const Footer = () => {
   const { t } = useTranslation();
@@ -10,11 +9,7 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           <div className="space-y-4">
-            <Link to="/" className="flex items-center gap-2 text-2xl font-bold">
-              <Scissors className="h-6 w-6 text-primary" />
-              <span className=" dark:text-white">Barber</span>
-              <span className="text-primary">Cloud</span>
-            </Link>
+            <BrandLogo variant="inverse" />
             <p className="text-sm text-secondary-foreground/80">
               {t('footer.description')}
             </p>

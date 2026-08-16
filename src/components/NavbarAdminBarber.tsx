@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Scissors, Filter, User, Menu, X , ArrowLeft } from "lucide-react";
+import { Filter, User, Menu, X , ArrowLeft } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import i18n from "@/lib/i18n"; // ✅ Instancia local
 import { Link } from "react-router-dom";
 import { UserProfileDialog } from "@/components/UserProfileDialog";
+import { BrandLogo } from "@/components/BrandLogo";
 
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
@@ -27,11 +28,7 @@ const NavbarAdminBarber = () => {
            <Link to="/home-admin-barber" className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition ">
             <ArrowLeft className="h-5 w-5 text-secondary dark:text-white" />
           </Link>
-          <Link to="/" className="flex items-center gap-2 text-2xl font-bold">
-            <Scissors className="h-6 w-6 text-primary" />
-            <span className="text-secondary dark:text-white">Barber</span>
-            <span className="text-primary">Cloud</span>
-          </Link>
+          <BrandLogo />
         </div>
 
         {/* Buscador y filtro (solo desktop) */}

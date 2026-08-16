@@ -8,6 +8,7 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
 import { useLogin } from "@/hooks/useAuth";
+import { BrandLogo } from "@/components/BrandLogo";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -50,16 +51,7 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-hero p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link 
-            to="/" 
-            className="inline-flex items-center gap-2 text-3xl font-bold cursor-pointer"
-          >
-            <Scissors 
-              className="h-8 w-8 text-primary" 
-            />
-            <span className="text-secondary dark:text-white">Barber</span>
-            <span className="text-primary">Cloud</span>
-          </Link>
+          <BrandLogo size="lg" className="cursor-pointer" />
         </div>
 
 
