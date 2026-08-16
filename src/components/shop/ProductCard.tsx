@@ -16,6 +16,7 @@ interface ProductCardProps {
 const ProductCard = ({ product, onViewDetails }: ProductCardProps) => {
   const { addToCart } = useCart();
   const { t } = useTranslation();
+  const isLowStock = typeof product.stock === "number" && product.stock > 0 && product.stock <= 5;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -36,6 +37,11 @@ const ProductCard = ({ product, onViewDetails }: ProductCardProps) => {
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        {isLowStock && (
+          <Badge className="absolute left-4 top-4 bg-amber-500 text-white hover:bg-amber-500">
+            Stock bajo
+          </Badge>
+        )}
         
         <Button
           size="icon"
@@ -82,6 +88,9 @@ const ProductCard = ({ product, onViewDetails }: ProductCardProps) => {
           <p className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
             ${product.price.toLocaleString()}
           </p>
+          {typeof product.stock === "number" && (
+            <p className="text-xs text-muted-foreground">{product.stock} disponible(s)</p>
+          )}
         </div>
         <Button
           onClick={handleAddToCart}

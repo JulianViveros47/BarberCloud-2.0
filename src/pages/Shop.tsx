@@ -61,6 +61,7 @@ const Shop = () => {
           images: [fallbackImages[index % fallbackImages.length]],
           colors: ["Unico"],
           description: product.description || "Producto disponible en la barberia.",
+          stock: product.stock,
         })),
     [productsQuery.data, searchQuery],
   );

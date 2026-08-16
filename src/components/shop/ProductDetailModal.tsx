@@ -32,6 +32,7 @@ const ProductDetailModal = ({ product, open, onClose }: ProductDetailModalProps)
   const [selectedColor, setSelectedColor] = useState<string>(product.colors[0]);
   const { addToCart } = useCart();
   const { t } = useTranslation();
+  const isLowStock = typeof product.stock === "number" && product.stock > 0 && product.stock <= 5;
 
   const handleAddToCart = () => {
     addToCart(product, selectedColor);
@@ -82,11 +83,19 @@ const ProductDetailModal = ({ product, open, onClose }: ProductDetailModalProps)
                 {product.category}
               </Badge>
             )}
+            {isLowStock && (
+              <Badge className="w-fit bg-amber-500 text-white hover:bg-amber-500">
+                Stock bajo
+              </Badge>
+            )}
 
             <div>
               <p className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
                 ${product.price.toLocaleString()}
               </p>
+              {typeof product.stock === "number" && (
+                <p className="text-sm text-muted-foreground">{product.stock} disponible(s)</p>
+              )}
             </div>
 
             <div>
