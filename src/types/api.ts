@@ -37,6 +37,26 @@ export interface ProductRequest {
   stock: number;
 }
 
+// Service Types
+export interface ServiceItemResponse {
+  id: string;
+  barberShopId: string;
+  name: string;
+  description: string | null;
+  priceInCents: number;
+  durationMinutes: number;
+  active: boolean;
+  createdAt: string;
+}
+
+export interface ServiceItemRequest {
+  barberShopId: string;
+  name: string;
+  description?: string;
+  priceInCents: number;
+  durationMinutes: number;
+}
+
 // BarberShop Types
 export interface BarberShopResponse {
   id: string;

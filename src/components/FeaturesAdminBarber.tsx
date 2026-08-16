@@ -1,4 +1,4 @@
-import { UserPlus, Users, PackagePlus, ClipboardList , Building, Store, TrendingUp, Star } from "lucide-react";
+import { UserPlus, Users, PackagePlus, ClipboardList, Building, Store, TrendingUp, Star, Scissors, Settings } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom"; 
@@ -37,6 +37,18 @@ const FeaturesAdminBarber = () => {
       title: t('featuresAdminBarber.setProduct.title'),
       description: t('featuresAdminBarber.setProduct.description'),
       route: "/home-product-modify",
+    },
+    {
+      icon: Scissors,
+      title: "Registrar servicios",
+      description: "Crea servicios reales asociados a tu barberia",
+      route: "/home-service",
+    },
+    {
+      icon: Settings,
+      title: "Modificar servicios",
+      description: "Actualiza precios, duracion y descripcion de tus servicios",
+      route: "/home-service-modify",
     },
     {
       icon: Store,

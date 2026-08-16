@@ -10,6 +10,37 @@ export function getAuthToken(): string | null {
   return localStorage.getItem(AUTH_TOKEN_KEY);
 }
 
+export function hasValidAuthToken(): boolean {
+  const token = getAuthToken();
+  if (!token) {
+    return false;
+  }
+
+  try {
+    const [, payload] = token.split('.');
+    if (!payload) {
+      clearAuthToken();
+      return false;
+    }
+
+    const normalizedPayload = payload
+      .replace(/-/g, '+')
+      .replace(/_/g, '/')
+      .padEnd(Math.ceil(payload.length / 4) * 4, '=');
+    const decodedPayload = JSON.parse(atob(normalizedPayload)) as { exp?: number };
+
+    if (decodedPayload.exp && decodedPayload.exp * 1000 <= Date.now()) {
+      clearAuthToken();
+      return false;
+    }
+
+    return true;
+  } catch {
+    clearAuthToken();
+    return false;
+  }
+}
+
 /**
  * Store auth token in localStorage
  */

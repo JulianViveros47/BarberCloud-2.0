@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { login, logout, register } from "@/services/authApi";
 import { LoginRequest, RegisterRequest } from "@/types/api";
-import { getAuthToken } from "@/services/api";
+import { hasValidAuthToken } from "@/services/api";
 
 export function useLogin() {
   return useMutation({
@@ -20,5 +20,5 @@ export function useLogout() {
 }
 
 export function isAuthenticated() {
-  return Boolean(getAuthToken());
+  return hasValidAuthToken();
 }

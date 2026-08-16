@@ -18,6 +18,9 @@ import HomeAdminBarber from "./pages/HomeAdminBarber";
 import HomeProduct from "./pages/HomeProduct";
 import HomeProductModify from "./pages/HomeProductModify";
 import HomeProductEdit from "./pages/HomeProductEdit";
+import HomeService from "./pages/HomeService";
+import HomeServiceModify from "./pages/HomeServiceModify";
+import HomeServiceEdit from "./pages/HomeServiceEdit";
 import RatingsAdminBarber from "./pages/RatingsAdminBarber";
 import HomeAdminBarberShop from "./pages/HomeAdminBarberShop";
 import RegisterModify from "./pages/RegisterModify";
@@ -34,6 +37,17 @@ const PrivateRoute = ({ children }: { children: ReactNode }) => {
   );
 };
 
+const GuestRoute = ({ children }: { children: ReactNode }) => {
+  const location = useLocation();
+  const redirectTo = (location.state as { from?: string } | null)?.from || "/home-admin-barber";
+
+  return isAuthenticated() ? <Navigate to={redirectTo} replace /> : <>{children}</>;
+};
+
+const HomeRoute = () => (
+  isAuthenticated() ? <Navigate to="/home-admin-barber" replace /> : <Index />
+);
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
@@ -42,8 +56,8 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/" element={<HomeRoute />} />
+            <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
             <Route path="/registro" element={<Register />} />
             <Route path="/home-customer" element={<HomeCustomer />} />
             <Route path="/shop" element={<HomeCustomerShop />} />
@@ -54,6 +68,9 @@ const App = () => (
             <Route path="/home-product" element={<PrivateRoute><HomeProduct /></PrivateRoute>} />
             <Route path="/home-product-modify" element={<PrivateRoute><HomeProductModify /></PrivateRoute>} />
             <Route path="/home-product-edit/:productId" element={<PrivateRoute><HomeProductEdit /></PrivateRoute>} />
+            <Route path="/home-service" element={<PrivateRoute><HomeService /></PrivateRoute>} />
+            <Route path="/home-service-modify" element={<PrivateRoute><HomeServiceModify /></PrivateRoute>} />
+            <Route path="/home-service-edit/:serviceId" element={<PrivateRoute><HomeServiceEdit /></PrivateRoute>} />
             <Route path="/ratings-admin-barber" element={<PrivateRoute><RatingsAdminBarber /></PrivateRoute>} />
             <Route path="/shop-admin-barber" element={<PrivateRoute><HomeAdminBarberShop /></PrivateRoute>} />
 

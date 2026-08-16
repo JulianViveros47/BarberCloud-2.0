@@ -24,7 +24,7 @@ const NavbarAdminBarber = () => {
 
         {/* Logo BarberCloud */}
         <div className="flex items-center gap-2">
-           <Link to="/login" className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition ">
+           <Link to="/home-admin-barber" className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition ">
             <ArrowLeft className="h-5 w-5 text-secondary dark:text-white" />
           </Link>
           <Link to="/" className="flex items-center gap-2 text-2xl font-bold">
