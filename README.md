@@ -25,7 +25,9 @@ BarberCloud está construido con un stack moderno y basado en buenas prácticas:
 - React Query (manejo de estado asíncrono)
 
 ### **Backend**
-*(Pendiente de implementación — Node)*
+- Spring Boot
+- PostgreSQL
+- API REST con JWT
 
 ---
 
@@ -47,6 +49,7 @@ BarberCloud está construido con un stack moderno y basado en buenas prácticas:
 - Gestión de empleados
 - Control de citas y clientes
 - Edición y deshabilitación de productos
+- Registro de ventas de productos con historial
 
 ### 🎨 **Interfaz**
 - Diseño clean y moderno
@@ -55,5 +58,42 @@ BarberCloud está construido con un stack moderno y basado en buenas prácticas:
 - Totalmente responsive
 
 ---
+
+## Demo local
+
+Backend:
+
+```bash
+cd ../backend/barbercloud
+./mvnw spring-boot:run
+```
+
+Frontend:
+
+```bash
+npm install
+npm run dev
+```
+
+Variables de entorno:
+
+```text
+VITE_API_BASE_URL=http://localhost:8080/api
+```
+
+Usuario demo, cuando el backend inicia con seed activo:
+
+- Email: `admin@barbercloud.test`
+- Contrasena: `Admin123!`
+
+Flujos utiles para probar:
+
+- Login: `http://localhost:5173/login`
+- Productos: `http://localhost:5173/register-products`
+- Servicios: `http://localhost:5173/register-services`
+- Nueva venta: `http://localhost:5173/shop-admin-barber`
+- Historial de ventas: `http://localhost:5173/historical-sales`
+
+Los datos demo quedan asociados a la barberia `BarberCloud Demo`, propiedad del usuario demo.
 
 
