@@ -11,6 +11,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
@@ -28,20 +39,29 @@ const Cart = ({ open, onClose }: CartProps) => {
   const [customerName, setCustomerName] = useState("");
   const [customerContact, setCustomerContact] = useState("");
 
-  const handleCheckout = async () => {
+  const canOpenConfirmation = () => {
     if (items.length === 0) {
       toast.error("El carrito esta vacio");
-      return;
+      return false;
     }
 
     const barberShopId = items[0].barberShopId;
     if (!barberShopId) {
       toast.error("No se pudo identificar la barberia de la venta");
-      return;
+      return false;
     }
 
     if (!customerName.trim()) {
       toast.error("Ingresa el nombre del cliente");
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleCheckout = async () => {
+    const barberShopId = items[0]?.barberShopId;
+    if (!barberShopId || !customerName.trim()) {
       return;
     }
 
@@ -188,14 +208,42 @@ const Cart = ({ open, onClose }: CartProps) => {
                 </CardContent>
               </Card>
 
-              <Button
-                onClick={handleCheckout}
-                className="w-full bg-gradient-primary hover:opacity-90 shadow-soft"
-                size="lg"
-                disabled={createSaleMutation.isPending}
-              >
-                {createSaleMutation.isPending ? "Registrando..." : t("shop.pay")}
-              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    onClick={(event) => {
+                      if (!canOpenConfirmation()) {
+                        event.preventDefault();
+                      }
+                    }}
+                    className="w-full bg-gradient-primary hover:opacity-90 shadow-soft"
+                    size="lg"
+                    disabled={createSaleMutation.isPending}
+                  >
+                    {createSaleMutation.isPending ? "Registrando..." : t("shop.pay")}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Confirmar venta</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Se registrara una venta para {customerName.trim()} por{" "}
+                      ${totalPrice.toLocaleString()} con {totalItems} producto(s).
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel disabled={createSaleMutation.isPending}>
+                      Cancelar
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleCheckout}
+                      disabled={createSaleMutation.isPending}
+                    >
+                      {createSaleMutation.isPending ? "Registrando..." : "Confirmar"}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
 
               <Button onClick={clearCart} variant="outline" className="w-full" size="sm">
                 {t("shop.emptyCart")}
