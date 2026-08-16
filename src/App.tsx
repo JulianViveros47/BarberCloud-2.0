@@ -24,6 +24,7 @@ import HomeServiceEdit from "./pages/HomeServiceEdit";
 import RatingsAdminBarber from "./pages/RatingsAdminBarber";
 import HomeAdminBarberShop from "./pages/HomeAdminBarberShop";
 import RegisterModify from "./pages/RegisterModify";
+import HistoricalSales from "./pages/HistoricalSales";
 
 const queryClient = new QueryClient();
 
@@ -73,6 +74,7 @@ const App = () => (
             <Route path="/home-service-edit/:serviceId" element={<PrivateRoute><HomeServiceEdit /></PrivateRoute>} />
             <Route path="/ratings-admin-barber" element={<PrivateRoute><RatingsAdminBarber /></PrivateRoute>} />
             <Route path="/shop-admin-barber" element={<PrivateRoute><HomeAdminBarberShop /></PrivateRoute>} />
+            <Route path="/historical" element={<PrivateRoute><HistoricalSales /></PrivateRoute>} />
 
             <Route path="/register-modify" element={<PrivateRoute><RegisterModify /></PrivateRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
