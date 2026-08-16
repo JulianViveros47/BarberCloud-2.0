@@ -1,4 +1,4 @@
-import { X, Plus, Minus, Trash2, ShoppingBag } from "lucide-react";
+import { Plus, Minus, Trash2, ShoppingBag } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { useCreateSale } from "@/hooks/useSales";
 
 interface CartProps {
   open: boolean;
@@ -19,25 +20,43 @@ interface CartProps {
 
 const Cart = ({ open, onClose }: CartProps) => {
   const { items, removeFromCart, updateQuantity, totalPrice, clearCart } = useCart();
+  const createSaleMutation = useCreateSale();
+  const { t } = useTranslation();
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (items.length === 0) {
-      toast.error("El carrito está vacío");
+      toast.error("El carrito esta vacio");
       return;
     }
-    toast.success("Procesando pago...", {
-      description: "Serás redirigido al sistema de pagos",
-    });
-    // Aquí iría la integración con el sistema de pagos
+
+    const barberShopId = items[0].barberShopId;
+    if (!barberShopId) {
+      toast.error("No se pudo identificar la barberia de la venta");
+      return;
+    }
+
+    try {
+      await createSaleMutation.mutateAsync({
+        barberShopId,
+        items: items.map((item) => ({
+          productId: item.id,
+          quantity: item.quantity,
+        })),
+      });
+      clearCart();
+      onClose();
+      toast.success("Venta registrada correctamente");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "No se pudo registrar la venta");
+    }
   };
-  const { t } = useTranslation();
 
   return (
     <Sheet open={open} onOpenChange={onClose}>
       <SheetContent className="w-full sm:max-w-lg flex flex-col">
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2 text-2xl text-primary">
-            <ShoppingBag className="w-6 h-6 text-black dark:text-white"  />
+            <ShoppingBag className="w-6 h-6 text-black dark:text-white" />
             {t("shop.cart")}
           </SheetTitle>
         </SheetHeader>
@@ -46,16 +65,13 @@ const Cart = ({ open, onClose }: CartProps) => {
           <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
             <ShoppingBag className="w-24 h-24 text-muted-foreground/30 mb-4" />
             <h3 className="text-xl font-semibold mb-2">{t("shop.cartEmpty")}</h3>
-            <p className="text-muted-foreground mb-6">
-              {t("shop.addProducts")}
-            </p>
+            <p className="text-muted-foreground mb-6">{t("shop.addProducts")}</p>
             <Button onClick={onClose} variant="outline">
               {t("shop.continueShopping")}
             </Button>
           </div>
         ) : (
           <>
-            {/* Lista de productos */}
             <div className="flex-1 overflow-y-auto py-4 space-y-4">
               {items.map((item) => (
                 <Card key={`${item.id}-${item.selectedColor}`} className="overflow-hidden">
@@ -87,7 +103,6 @@ const Cart = ({ open, onClose }: CartProps) => {
                       </Button>
                     </div>
 
-                    {/* Controles de cantidad */}
                     <div className="flex items-center justify-between mt-4">
                       <div className="flex items-center gap-2 border border-border rounded-md">
                         <Button
@@ -98,9 +113,7 @@ const Cart = ({ open, onClose }: CartProps) => {
                         >
                           <Minus className="w-3 h-3" />
                         </Button>
-                        <span className="w-8 text-center font-semibold">
-                          {item.quantity}
-                        </span>
+                        <span className="w-8 text-center font-semibold">{item.quantity}</span>
                         <Button
                           variant="ghost"
                           size="icon"
@@ -110,16 +123,13 @@ const Cart = ({ open, onClose }: CartProps) => {
                           <Plus className="w-3 h-3" />
                         </Button>
                       </div>
-                      <p className="font-bold">
-                        ${(item.price * item.quantity).toLocaleString()}
-                      </p>
+                      <p className="font-bold">${(item.price * item.quantity).toLocaleString()}</p>
                     </div>
                   </CardContent>
                 </Card>
               ))}
             </div>
 
-            {/* Resumen y botón de pago */}
             <div className="border-t border-border pt-4 space-y-4">
               <Card className="bg-secondary/50">
                 <CardContent className="p-4 space-y-3">
@@ -145,16 +155,12 @@ const Cart = ({ open, onClose }: CartProps) => {
                 onClick={handleCheckout}
                 className="w-full bg-gradient-primary hover:opacity-90 shadow-soft"
                 size="lg"
+                disabled={createSaleMutation.isPending}
               >
-                {t("shop.pay")}
+                {createSaleMutation.isPending ? "Registrando..." : t("shop.pay")}
               </Button>
 
-              <Button
-                onClick={clearCart}
-                variant="outline"
-                className="w-full"
-                size="sm"
-              >
+              <Button onClick={clearCart} variant="outline" className="w-full" size="sm">
                 {t("shop.emptyCart")}
               </Button>
             </div>

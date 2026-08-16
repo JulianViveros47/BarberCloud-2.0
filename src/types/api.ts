@@ -57,6 +57,35 @@ export interface ServiceItemRequest {
   durationMinutes: number;
 }
 
+// Sale Types
+export interface SaleItemRequest {
+  productId: string;
+  quantity: number;
+}
+
+export interface SaleRequest {
+  barberShopId: string;
+  items: SaleItemRequest[];
+}
+
+export interface SaleItemResponse {
+  id: string;
+  productId: string;
+  productName: string;
+  quantity: number;
+  unitPriceInCents: number;
+  subtotalInCents: number;
+}
+
+export interface SaleResponse {
+  id: string;
+  barberShopId: string;
+  customerEmail: string;
+  totalInCents: number;
+  createdAt: string;
+  items: SaleItemResponse[];
+}
+
 // BarberShop Types
 export interface BarberShopResponse {
   id: string;

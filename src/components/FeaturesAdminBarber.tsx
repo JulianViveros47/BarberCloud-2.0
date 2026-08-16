@@ -1,4 +1,4 @@
-import { UserPlus, Users, PackagePlus, ClipboardList, Building, Store, TrendingUp, Star, Scissors, Settings } from "lucide-react";
+import { UserPlus, Users, PackagePlus, ClipboardList, Building, Store, TrendingUp, Star, Scissors, Settings, ShoppingCart } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom"; 
@@ -54,6 +54,12 @@ const FeaturesAdminBarber = () => {
       icon: Store,
       title: t('featuresAdminBarber.store.title'),
       description: t('featuresAdminBarber.store.description'),
+      route: "/shop-admin-barber",
+    },
+    {
+      icon: ShoppingCart,
+      title: "Nueva venta",
+      description: "Registra una venta desde el carrito de productos",
       route: "/shop-admin-barber",
     },
     {

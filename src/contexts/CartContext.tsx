@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 export interface Product {
   id: string;
+  barberShopId?: string;
   name: string;
   price: number;
   images: string[];
